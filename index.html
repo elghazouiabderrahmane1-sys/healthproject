@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediMind AI - Predict Your Health Before It Predicts You</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+</head>
+<body>
+    <!-- Auth Modals -->
+    <div id="login-modal" class="auth-modal">
+        <div class="auth-modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="auth-container">
+                <div class="auth-left">
+                    <h2>Welcome Back</h2>
+                    <p>Access your personalized health intelligence</p>
+                    <form class="auth-form" id="login-form">
+                        <div class="form-group">
+                            <input type="email" placeholder="Email address" required>
+                            <span class="input-glow"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" placeholder="Password" id="login-password" required>
+                            <span class="input-glow"></span>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar"></div>
+                            <span class="strength-text">Strong</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+                    </form>
+                    <p class="auth-toggle">Don't have an account? <a href="#" class="switch-auth">Sign up</a></p>
+                </div>
+                <div class="auth-right">
+                    <div class="auth-bg-glow"></div>
+                    <svg viewBox="0 0 200 200" class="auth-decoration">
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="url(#gradAuth)" stroke-width="2" opacity="0.5"/>
+                        <path d="M100 20 Q140 60 100 100 Q60 60 100 20" fill="url(#gradAuth)" opacity="0.3"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="signup-modal" class="auth-modal hidden">
+        <div class="auth-modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="auth-container">
+                <div class="auth-left">
+                    <h2>Join MediMind</h2>
+                    <p>Start your journey to better health</p>
+                    <form class="auth-form" id="signup-form">
+                        <div class="form-group">
+                            <input type="text" placeholder="Full name" required>
+                            <span class="input-glow"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Email address" required>
+                            <span class="input-glow"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" placeholder="Create password" id="signup-password" required>
+                            <span class="input-glow"></span>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar"></div>
+                            <span class="strength-text">Strong</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+                    </form>
+                    <p class="auth-toggle">Already have an account? <a href="#" class="switch-auth">Sign in</a></p>
+                </div>
+                <div class="auth-right">
+                    <div class="auth-bg-glow"></div>
+                    <svg viewBox="0 0 200 200" class="auth-decoration">
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="url(#gradAuth)" stroke-width="2" opacity="0.5"/>
+                        <path d="M100 20 Q140 60 100 100 Q60 60 100 20" fill="url(#gradAuth)" opacity="0.3"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Loading Animation -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="ai-loader">
+            <div class="loader-core">
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+            </div>
+            <p class="loader-text">Initializing MediMind AI</p>
+            <p class="loader-subtext">Booting your health intelligence system</p>
+            <div class="loading-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Neural Network Background -->
+    <canvas id="neural-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">🧠</span>
+                <span class="logo-text">MediMind AI</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#demo" class="nav-link">Demo</a></li>
+                <li><a href="#team" class="nav-link">Team</a></li>
+                <li><a href="#pricing" class="nav-link">Pricing</a></li>
+                <li class="nav-divider"></li>
+                <li><a href="#" class="nav-link" id="open-login">Login</a></li>
+                <li><a href="#" class="nav-link cta-nav" id="open-signup">Get Started</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="title-word">Predict</span>
+                <span class="title-word">Your</span>
+                <span class="title-word">Health.</span>
+                <span class="title-word">Before</span>
+                <span class="title-word">It</span>
+                <span class="title-word">Predicts</span>
+                <span class="title-word">You.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Advanced AI-powered health intelligence that analyzes your sleep, stress, lifestyle, and symptoms 
+                to predict medical risks before they happen.
+            </p>
+            <div class="hero-value-props">
+                <div class="value-prop">
+                    <span class="prop-icon">📊</span>
+                    <p><strong>92% Accuracy</strong> in predicting health risks 6+ months early</p>
+                </div>
+                <div class="value-prop">
+                    <span class="prop-icon">🏥</span>
+                    <p><strong>Medical Grade</strong> AI trained on 10M+ health records</p>
+                </div>
+                <div class="value-prop">
+                    <span class="prop-icon">⚡</span>
+                    <p><strong>Real-Time</strong> health insights and personalized recommendations</p>
+                </div>
+            </div>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" id="start-scan">Start Health Scan</button>
+                <button class="btn btn-secondary">Explore Platform</button>
+            </div>
+            <div class="scroll-indicator">
+                <span>Scroll to explore</span>
+                <div class="scroll-arrow"></div>
+            </div>
+        </div>
+        <div class="hero-animated-bg">
+            <div class="floating-orb orb-1"></div>
+            <div class="floating-orb orb-2"></div>
+            <div class="floating-orb orb-3"></div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-header">
+            <h2>Powerful Features</h2>
+            <p>Everything you need for intelligent health management</p>
+        </div>
+        
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"></path>
+                    </svg>
+                </div>
+                <h3>AI Health Risk Score</h3>
+                <p>Get a personalized risk assessment based on your unique health profile and patterns.</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3>Smart Symptom Analysis</h3>
+                <p>Advanced pattern recognition to identify potential health issues before they become serious.</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 14c1.49-1.46 2.78-2.64 2.95-4.35.33-3.61-3.85-6.54-8.95-5.65-3.03.53-5.46 2.64-5.46 5.65 0 1.5.37 2.58 1.33 3.81M8 7s1.5 2-1 2-3-2-1-2m12-4s1.5 2-1 2-3-2-1-2M3 16h16v2a3 3 0 01-3 3H6a3 3 0 01-3-3v-2z"></path>
+                    </svg>
+                </div>
+                <h3>Voice AI Assistant</h3>
+                <p>Interactive voice-powered health assistant available 24/7 for personalized guidance.</p>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12h6m-6 4h6m2-5a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3>Medical Document Scanner</h3>
+                <p>Intelligently scan and analyze medical documents with AI-powered OCR technology.</p>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <h3>Real-Time Dashboard</h3>
+                <p>Comprehensive health metrics and insights updated in real-time across all devices.</p>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h3>Personalized Recommendations</h3>
+                <p>AI-driven health recommendations tailored specifically to your needs and goals.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="section-header">
+            <h2>How It Works</h2>
+            <p>Simple steps to take control of your health</p>
+        </div>
+
+        <div class="steps-container">
+            <div class="step-item">
+                <div class="step-number">01</div>
+                <h3>Input Your Data</h3>
+                <p>Share your health metrics, lifestyle habits, and medical history through our secure interface.</p>
+                <div class="step-animation">
+                    <div class="data-particles">
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-connector"></div>
+
+            <div class="step-item">
+                <div class="step-number">02</div>
+                <h3>AI Analysis</h3>
+                <p>Our advanced AI algorithms process your data and identify potential health patterns.</p>
+                <div class="step-animation">
+                    <div class="ai-brain">
+                        <div class="brain-pulse"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-connector"></div>
+
+            <div class="step-item">
+                <div class="step-number">03</div>
+                <h3>Risk Assessment</h3>
+                <p>Generate your personalized health risk score with detailed insights.</p>
+                <div class="step-animation">
+                    <div class="risk-meter">
+                        <div class="meter-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-connector"></div>
+
+            <div class="step-item">
+                <div class="step-number">04</div>
+                <h3>Get Recommendations</h3>
+                <p>Receive actionable recommendations to improve your health and prevent risks.</p>
+                <div class="step-animation">
+                    <div class="recommendation-items">
+                        <div class="rec-item"></div>
+                        <div class="rec-item"></div>
+                        <div class="rec-item"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo Section -->
+    <section id="demo" class="demo-section">
+        <div class="section-header">
+            <h2>Interactive Dashboard Preview</h2>
+            <p>See your health metrics at a glance</p>
+        </div>
+
+        <div class="demo-container">
+            <div class="demo-panel">
+                <div class="panel-header">
+                    <h3>Health Overview</h3>
+                    <span class="panel-date" id="demo-date">Today</span>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Health Score</div>
+                        <div class="metric-circle">
+                            <svg class="progress-ring" width="120" height="120">
+                                <circle class="progress-ring__circle" cx="60" cy="60" r="54" />
+                            </svg>
+                            <div class="metric-value">
+                                <span id="score-value">92</span>%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Sleep Quality</div>
+                        <div class="metric-bar">
+                            <div class="bar-fill" style="width: 85%"></div>
+                        </div>
+                        <div class="metric-value-text">8.5h avg</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Stress Level</div>
+                        <div class="metric-bar">
+                            <div class="bar-fill stress" style="width: 35%"></div>
+                        </div>
+                        <div class="metric-value-text">Low</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Activity</div>
+                        <div class="metric-bar">
+                            <div class="bar-fill activity" style="width: 72%"></div>
+                        </div>
+                        <div class="metric-value-text">7200 steps</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h4>Weekly Trends</h4>
+                    <svg class="mini-chart" viewBox="0 0 300 100">
+                        <polyline points="0,80 40,60 80,50 120,45 160,55 200,40 240,50 280,35" />
+                    </svg>
+                </div>
+
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 20px;">View Full Dashboard</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Voice Assistant Section -->
+    <section id="voice-assistant" class="voice-assistant">
+        <div class="section-header">
+            <h2>AI Voice Assistant</h2>
+            <p>Talk to your personal health AI</p>
+        </div>
+
+        <div class="voice-container">
+            <div class="voice-box">
+                <div class="microphone-wrapper">
+                    <div class="mic-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
+                            <path d="M17 16.91c-1.48 1.46-3.51 2.36-5.77 2.36-2.26 0-4.29-.9-5.77-2.36l-1.1 1.1c1.86 1.86 4.41 3 7.07 3 2.66 0 5.21-1.14 7.07-3l-1.1-1.1zM12 20c.55 0 1-.45 1-1v-3c0-.55-.45-1-1-1s-1 .45-1 1v3c0 .55.45 1 1 1z"></path>
+                        </svg>
+                    </div>
+                    <div class="sound-waves">
+                        <span class="wave"></span>
+                        <span class="wave"></span>
+                        <span class="wave"></span>
+                    </div>
+                </div>
+                
+                <div class="voice-transcript">
+                    <p class="ai-response" id="ai-response">
+                        "Hello! I'm your MediMind AI assistant. What would you like to know about your health today?"
+                    </p>
+                </div>
+
+                <div class="voice-actions">
+                    <button class="btn btn-small btn-primary">Start Listening</button>
+                    <button class="btn btn-small btn-secondary">Example Questions</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Document Scanner Section -->
+    <section id="document-scanner" class="document-scanner">
+        <div class="section-header">
+            <h2>Smart Document Scanner</h2>
+            <p>AI-powered medical document analysis with text-to-speech</p>
+        </div>
+
+        <div class="scanner-container">
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </div>
+                <h3>Drag & Drop Documents</h3>
+                <p>or click to browse (PDF, JPG, PNG, DOC)</p>
+                <input type="file" id="file-input" accept=".pdf,.jpg,.png,.doc,.docx" hidden>
+            </div>
+
+            <div class="scanner-preview" id="scanner-preview">
+                <div class="scan-animation">
+                    <div class="scan-line"></div>
+                    <p class="scan-status">Analyzing document with AI...</p>
+                </div>
+            </div>
+
+            <div class="scan-result" id="scan-result" style="display: none;">
+                <div class="result-header">
+                    <h4>✓ Analysis Complete</h4>
+                    <button class="btn btn-small btn-primary" id="read-document">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; display: inline; margin-right: 8px;">
+                            <path d="M19 14c1.49-1.46 2.78-2.64 2.95-4.35.33-3.61-3.85-6.54-8.95-5.65-3.03.53-5.46 2.64-5.46 5.65 0 1.5.37 2.58 1.33 3.81M8 7s1.5 2-1 2-3-2-1-2m12-4s1.5 2-1 2-3-2-1-2M3 16h16v2a3 3 0 01-3 3H6a3 3 0 01-3-3v-2z"></path>
+                        </svg>
+                        Read Document
+                    </button>
+                </div>
+                <div class="result-details">
+                    <p><strong>Document Type:</strong> Medical Report</p>
+                    <p><strong>Key Findings:</strong> All vital signs normal, excellent health indicators</p>
+                    <p><strong>Confidence:</strong> 98%</p>
+                </div>
+                <div class="extracted-text" id="extracted-text">
+                    <h5>Extracted Content</h5>
+                    <p>Patient demonstrates excellent overall health with normal vital signs across all measured parameters. Recommended: Continue current health regimen and routine check-ups annually.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="team">
+        <div class="section-header">
+            <h2>Meet Our Visionary Team</h2>
+            <p>World-class experts building the future of healthcare AI</p>
+        </div>
+
+        <div class="team-grid">
+            <!-- Team Member 1 -->
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="ABDO.jpeg" alt="Elghazoui Abderrahman - Founder & AI Engineer" class="member-photo">
+                </div>
+                <h3>Elghazoui Abderrahman</h3>
+                <p class="member-role">Founder & AI Engineer</p>
+                <p class="member-bio">Visionary architect of adaptive AI systems transforming healthcare. 10+ years in deep learning, neural networks, and precision medicine. Built MediMind AI to predict health risks before they become critical. Expert in building intelligent systems that save lives.</p>
+                <div class="member-credentials">
+                    <div class="credential">🏆 AI & ML Expert</div>
+                    <div class="credential">🧬 Healthcare Innovator</div>
+                    <div class="credential">📊 Predictive Analytics</div>
+                </div>
+                <div class="member-social">
+                    <a href="#" class="social-icon" title="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.475-2.236-1.986-2.236-1.081 0-1.722.722-2.006 1.422-.103.249-.129.597-.129.946v5.437h-3.554s.047-8.821 0-9.731h3.554v1.375c.427-.659 1.191-1.594 2.897-1.594 2.115 0 3.703 1.381 3.703 4.352v5.598zM5.337 8.855c-1.144 0-1.915-.758-1.915-1.705 0-.951.768-1.711 1.959-1.711 1.188 0 1.914.76 1.939 1.711 0 .947-.751 1.705-1.983 1.705zm1.581 11.597H3.756V9.721h3.162v10.731zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-icon" title="GitHub">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Team Member 2 -->
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="member2.jpeg" alt="Zainab Laaziri - Chief Data Scientist" class="member-photo">
+                </div>
+                <h3>Zainab Laaziri</h3>
+                <p class="member-role">Chief Data Scientist</p>
+                <p class="member-bio">Transforming complex biomedical data into actionable insights. Expert in predictive analytics and neural pattern recognition for health intelligence.</p>
+                <div class="member-social">
+                    <a href="#" class="social-icon" title="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.475-2.236-1.986-2.236-1.081 0-1.722.722-2.006 1.422-.103.249-.129.597-.129.946v5.437h-3.554s.047-8.821 0-9.731h3.554v1.375c.427-.659 1.191-1.594 2.897-1.594 2.115 0 3.703 1.381 3.703 4.352v5.598zM5.337 8.855c-1.144 0-1.915-.758-1.915-1.705 0-.951.768-1.711 1.959-1.711 1.188 0 1.914.76 1.939 1.711 0 .947-.751 1.705-1.983 1.705zm1.581 11.597H3.756V9.721h3.162v10.731zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-icon" title="GitHub">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="section-header">
+            <h2>What Users Say</h2>
+            <p>Real results from real people</p>
+        </div>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="rating">
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                </div>
+                <p class="testimonial-text">
+                    "MediMind AI detected early signs of stress-related hypertension that I didn't even know about. 
+                    The recommendations have genuinely improved my quality of life."
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">JM</div>
+                    <div>
+                        <p class="author-name">James Mitchell</p>
+                        <p class="author-role">Product Manager</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="rating">
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                </div>
+                <p class="testimonial-text">
+                    "The AI voice assistant is incredibly helpful. It's like having a personal health coach 
+                    available 24/7. Highly recommended for anyone serious about their health."
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">EC</div>
+                    <div>
+                        <p class="author-name">Emily Chen</p>
+                        <p class="author-role">Fitness Enthusiast</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="rating">
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                </div>
+                <p class="testimonial-text">
+                    "The document scanner saved me hours. Being able to instantly analyze medical reports 
+                    with AI accuracy is a game-changer for managing my family's health records."
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">RS</div>
+                    <div>
+                        <p class="author-name">Robert Smith</p>
+                        <p class="author-role">Healthcare Administrator</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="section-header">
+            <h2>Simple Pricing</h2>
+            <p>Choose the plan that works for you</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <h3>Free</h3>
+                <div class="price">
+                    <span class="currency">$</span>
+                    <span class="amount">0</span>
+                    <span class="period">/month</span>
+                </div>
+                <ul class="features-list">
+                    <li>✓ Basic health score</li>
+                    <li>✓ Symptom checker</li>
+                    <li>✓ Limited dashboard access</li>
+                    <li>✗ AI voice assistant</li>
+                    <li>✗ Document scanner</li>
+                </ul>
+                <button class="btn btn-secondary">Get Started</button>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="pricing-card featured">
+                <div class="featured-badge">Most Popular</div>
+                <h3>Pro</h3>
+                <div class="price">
+                    <span class="currency">$</span>
+                    <span class="amount">29</span>
+                    <span class="period">/month</span>
+                </div>
+                <ul class="features-list">
+                    <li>✓ Advanced health analytics</li>
+                    <li>✓ AI voice assistant</li>
+                    <li>✓ Document scanner</li>
+                    <li>✓ Real-time dashboard</li>
+                    <li>✓ Priority support</li>
+                </ul>
+                <button class="btn btn-primary">Choose Plan</button>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="pricing-card">
+                <h3>Premium</h3>
+                <div class="price">
+                    <span class="currency">$</span>
+                    <span class="amount">99</span>
+                    <span class="period">/month</span>
+                </div>
+                <ul class="features-list">
+                    <li>✓ All Pro features</li>
+                    <li>✓ Genetic analysis</li>
+                    <li>✓ Personal health coach</li>
+                    <li>✓ 24/7 medical concierge</li>
+                    <li>✓ Family accounts</li>
+                </ul>
+                <button class="btn btn-secondary">Choose Plan</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section id="final-cta" class="final-cta">
+        <div class="cta-content">
+            <h2>Take Control of Your Health Today</h2>
+            <p>Join thousands of users who are already taking charge of their health with MediMind AI.</p>
+            <button class="btn btn-primary btn-large">Get Started Now</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>MediMind AI</h4>
+                <p>Advanced AI-powered health intelligence platform.</p>
+                <div class="footer-socials">
+                    <a href="#" class="footer-social">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="footer-social">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="footer-social">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#demo">Dashboard</a></li>
+                    <li><a href="#">API Docs</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#team">About Us</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">HIPAA Compliance</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 MediMind AI. All rights reserved. Protecting your health through intelligent AI.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
